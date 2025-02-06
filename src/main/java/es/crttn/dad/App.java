@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-    RootController rc;
+    private static RootController rc;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -16,5 +16,9 @@ public class App extends Application {
         primaryStage.setTitle("Mail Server");
         primaryStage.setScene(new Scene(rc.getRoot(), 800, 600));
         primaryStage.show();
+    }
+
+    public static RootController getRc() {
+        return rc;
     }
 }
