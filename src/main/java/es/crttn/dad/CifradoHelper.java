@@ -49,26 +49,4 @@ public class CifradoHelper {
         // Convertimos los bytes de vuelta a una cadena
         return new String(passwordDescifrada);
     }
-
-    private Cipher obtieneCipher(boolean paraCifrar) throws Exception {
-        final String frase = "FraseLargaConDiferentesLetrasNumerosYCaracteresEspeciales_áÁéÉíÍóÓúÚüÜñÑ1234567890!#%$&()=%_NO_USAR_ESTA_FRASE!_";
-
-        // Crear un mensaje hash usando SHA-256 (esto da 32 bytes)
-        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.update(frase.getBytes("UTF-8"));
-
-        // Tomar solo los primeros 16 bytes de los 32 que genera SHA-256
-        final byte[] claveAES = Arrays.copyOf(digest.digest(), 16); // Asegura que la clave tenga exactamente 16 bytes
-
-        final SecretKeySpec key = new SecretKeySpec(claveAES, "AES");
-
-        final Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        if (paraCifrar) {
-            aes.init(Cipher.ENCRYPT_MODE, key);
-        } else {
-            aes.init(Cipher.DECRYPT_MODE, key);
-        }
-
-        return aes;
-    }
 }

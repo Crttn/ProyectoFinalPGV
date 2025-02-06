@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 
@@ -25,7 +26,7 @@ public class MenuController implements Initializable {
     private TextField userIdLabel;
 
     @FXML
-    private TextField userPassLabel;
+    private PasswordField userPassField;
 
     public MenuController() {
         try {
@@ -50,7 +51,7 @@ public class MenuController implements Initializable {
     @FXML
     void onLoginAction(ActionEvent event) throws Exception {
         String user = userIdLabel.getText();
-        String password = userPassLabel.getText();
+        String password = userPassField.getText();
 
         // Recuperar la contraseña cifrada desde la base de datos (en Base64)
         String passwordCifradaBase64 = DatabaseHelper.comprobarUsuario(user); // Esto debería devolver la contraseña cifrada en Base64
@@ -86,16 +87,11 @@ public class MenuController implements Initializable {
         }
     }
 
-
-
-
-
-
     public String getUserIdLabel() {
         return userIdLabel.getText();
     }
 
     public String getUserPassLabel() {
-        return userPassLabel.getText();
+        return userPassField.getText();
     }
 }
