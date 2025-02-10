@@ -35,7 +35,6 @@
       <version>8.0.33</version>  <!-- Usa la última versión -->
     </dependency>
 
-
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-email</artifactId>

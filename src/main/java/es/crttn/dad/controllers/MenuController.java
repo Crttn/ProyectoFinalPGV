@@ -48,24 +48,28 @@ public class MenuController implements Initializable {
         return root;
     }
 
+    // Método para manejar el login de usuarios
     @FXML
     void onLoginAction(ActionEvent event) throws Exception {
+
+        // Se obtienen las credenciales del usuario
         String user = userIdLabel.getText();
         String password = userPassField.getText();
 
         // Recuperar la contraseña cifrada desde la base de datos (en Base64)
         String passwordCifradaBase64 = DatabaseHelper.comprobarUsuario(user); // Esto debería devolver la contraseña cifrada en Base64
-        String passwordFinal;
+        String passwordFinal; // String para la contrasela sin descifrar
 
+        // Utilizamos returns para no tener que inicializar passwordFinal
         try {
-            // Descifrar la contraseña cifrada usando el método descifra
-            passwordFinal = CifradoHelper.descifra(passwordCifradaBase64);
+            // Descifrar la contraseña cifrada usando el método descifrar
+            passwordFinal = CifradoHelper.descifrar(passwordCifradaBase64);
         } catch (IllegalArgumentException e) {
             System.out.println("Error al decodificar la contraseña: " + e.getMessage());
-            return; // Salir del método si hay un error al descifrar
+            return;
         } catch (Exception e) {
             System.out.println("Error inesperado: " + e.getMessage());
-            return; // Salir del método si ocurre un error inesperado
+            return;
         }
 
         // Verificar el ID de usuario en la base de datos
@@ -73,24 +77,31 @@ public class MenuController implements Initializable {
 
         // Si el usuario no existe, registrarlo
         if (idUsuario == -1) {
-            // Cifrar la contraseña antes de registrarla
-            DatabaseHelper.registrarUsuario(user, password); // Registramos usuario y contraseña cifrada
-            System.out.println("Nuevo usuario registrado con éxito.");
-            App.getRc().getRoot().setCenter(ic.getRoot()); // Cambiar la pantalla o vista
+            // Si el registro fue exitoso ingresa al Inbox
+            if(DatabaseHelper.registrarUsuario(user, password) != -1 ) {
+                System.out.println("Nuevo usuario registrado con éxito.");
+                App.getRc().getRoot().setCenter(ic.getRoot()); // Cambiar la vista a Inbox
+            }
+            // Registra al usuario y cifra la contraseña para almacenarla
+            DatabaseHelper.registrarUsuario(user, password);
+
         }
+
         // Si el usuario existe, comparar la contraseña
         else if (password.equals(passwordFinal)) {
             System.out.println("Inicio de sesión exitoso.");
-            App.getRc().getRoot().setCenter(ic.getRoot()); // Cambiar la pantalla o vista
+            App.getRc().getRoot().setCenter(ic.getRoot()); // Cambiar la vista a Inbox
         } else {
             System.out.println("Error: Usuario o contraseña incorrectos.");
         }
     }
 
+    // Metodo para obtener el usuario desde otro controlador
     public String getUserIdLabel() {
         return userIdLabel.getText();
     }
 
+    // Metodo para obtener la contraseña desde otro controlador
     public String getUserPassLabel() {
         return userPassField.getText();
     }
