@@ -18,13 +18,12 @@
     <!-- Panel Izquierdo: Lista de Carpetas -->
     <left>
         <VBox spacing="10" style="-fx-padding: 10px;">
-            <Label style="-fx-font-size: 16px;" text="Usuario@dominio" />
+            <Label fx:id="emailLabel" style="-fx-font-size: 16px;" text="Usuario@dominio" />
             <ListView fx:id="listCarpetas">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Bandeja de entrada" />
                         <String fx:value="Enviados" />
-                        <String fx:value="Papelera" />
                     </FXCollections>
                 </items>
             </ListView>

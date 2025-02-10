@@ -54,6 +54,9 @@ public class InboxController implements Initializable {
     private TextArea txtVistaCorreo;
 
     @FXML
+    private Label emailLabel;
+
+    @FXML
     private BorderPane root;
 
     private ScheduledExecutorService scheduler;
@@ -89,6 +92,7 @@ public class InboxController implements Initializable {
             String userEmail = RootController.getMc().getUserIdLabel();
             String userPass = RootController.getMc().getUserPassLabel();
 
+            emailLabel.setText(userEmail + "@localhost");
             iniciarActualizacionAutomatica("127.0.0.1", userEmail, userPass);
 
             if ("Bandeja de entrada".equals(newVal)) {
