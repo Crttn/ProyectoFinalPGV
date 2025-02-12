@@ -214,9 +214,7 @@ public class DatabaseHelper {
         List<Correo> correosEnviados = new ArrayList<>();
 
         // Consulta SQL para obtener los datos de la tabla correos_enviados
-        String query = "SELECT c.destinatario, c.asunto, c.fecha, c.cuerpo " +
-                "FROM correos_enviados c " +
-                "WHERE c.id_usuario = ?";
+        String query = "SELECT destinatario, asunto, fecha, cuerpo FROM correos_enviados WHERE id_usuario = ?";
 
         // Establecemos la conexión con la base de datos y preparamos la consulta SQL para insertar los datos
         try (Connection connection = conectar(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {

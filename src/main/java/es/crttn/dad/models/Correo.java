@@ -21,7 +21,7 @@ public class Correo {
         this.fecha = sdf.format(message.getSentDate()).substring(0, 10);  // Solo fecha (sin hora)
 
         try {
-            this.contenido = message.getContent().toString(); // Puede ser texto o multipart
+            this.contenido = message.getContent().toString();
         } catch (Exception e) {
             this.contenido = "(No se pudo cargar el contenido)";
         }

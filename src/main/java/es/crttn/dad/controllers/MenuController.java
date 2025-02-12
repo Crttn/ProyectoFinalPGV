@@ -82,9 +82,6 @@ public class MenuController implements Initializable {
                 System.out.println("Nuevo usuario registrado con éxito.");
                 App.getRc().getRoot().setCenter(ic.getRoot()); // Cambiar la vista a Inbox
             }
-            // Registra al usuario y cifra la contraseña para almacenarla
-            DatabaseHelper.registrarUsuario(user, password);
-
         }
 
         // Si el usuario existe, comparar la contraseña

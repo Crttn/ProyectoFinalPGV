@@ -1,20 +1,16 @@
 package es.crttn.dad.controllers;
 
-import es.crttn.dad.CifradoHelper;
 import es.crttn.dad.DatabaseHelper;
 import es.crttn.dad.RootController;
 import es.crttn.dad.models.Correo;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.mail.Email;
@@ -24,14 +20,11 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class InboxController implements Initializable {
 
@@ -58,8 +51,6 @@ public class InboxController implements Initializable {
 
     @FXML
     private BorderPane root;
-
-    private ScheduledExecutorService scheduler;
 
     private ObservableList<Correo> inboxList;
     private ObservableList<Correo> sendList;
@@ -102,14 +93,15 @@ public class InboxController implements Initializable {
             // Coloca correo de usuario en la interfaz
             emailLabel.setText(userEmail + "@localhost");
 
-            // Inicia una actualizacón de los correos recibidos cada 60 segundos
-            iniciarActualizacionAutomatica("127.0.0.1", userEmail, userPass);
+            // Carga los corres desde el POP3
+            cargarCorreos("127.0.0.1", userEmail, userPass);
 
             // Cambia los datos de las listas según la opción seleccionada
             if ("Bandeja de entrada".equals(newVal)) {
                 colRemitente.setText("Remitente");  // Actuliza el nombre de la columna
                 inboxList.clear();
-                cargarCorreosDesdeBD(userEmail); // Carga los correos desde la base de datos
+                cargarCorreos("127.0.0.1", userEmail, userPass); // Carga los corres desde el POP3
+                cargarCorreosRecibidos(userEmail); // Carga los correos desde la base de datos
                 tablaCorreos.setItems(inboxList); // Asegurar que se usa la lista correcta
             } else if ("Enviados".equals(newVal)) {
                 colRemitente.setText("Destinatario");
@@ -136,7 +128,7 @@ public class InboxController implements Initializable {
     }
 
     // Carga los correos desde la base de datos
-    private void cargarCorreosDesdeBD(String userEmail) {
+    private void cargarCorreosRecibidos(String userEmail) {
 
         // Recupera el id del usuario
         int idUsuario = DatabaseHelper.obtenerIdUsuario(userEmail);
@@ -151,22 +143,8 @@ public class InboxController implements Initializable {
             return;
         }
 
-
         inboxList.setAll(DatabaseHelper.obtenerCorreosRecibidos(idUsuario)); // Cargar correos desde la BD
         tablaCorreos.setItems(inboxList); // Mostrar en la tabla con los datos
-    }
-
-    // Inicia una actualización automatica cada 60 segundos
-    public void iniciarActualizacionAutomatica(String host, String username, String password) {
-        // Inicializa el programador de tareas en un solo hilo
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-
-        // Tarea que se ejecuta cada 60 segundos
-        scheduler.scheduleAtFixedRate(() -> {
-            Platform.runLater(() -> { // Ejecuta la actualización en el hilo de la interfaz gráfica
-                cargarCorreos(host, username, password); // Se cargan los datos desde el servidor POP3
-            });
-        }, 0, 60, TimeUnit.SECONDS); // Se ejecuta cada 60 segundos
     }
 
     // Metodo principal para cargar correos desde el servidor POP3
@@ -203,11 +181,7 @@ public class InboxController implements Initializable {
                 if (!DatabaseHelper.existeCorreoEnBD(correo)) {  // Verifica si ya está guardado
                     DatabaseHelper.guardarCorreoRecibido(userID, correo); // Guarda en BD
                 }
-                inboxList.add(correo);  // Agrega al ObservableList para la tabla
             }
-
-            // Refresca la tabla de correos para mostrar los nuevos mensajes
-            tablaCorreos.refresh();
 
             // Cierra la bandeja de entrada sin eliminar correos
             inbox.close(false);
